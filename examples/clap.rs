@@ -6,7 +6,7 @@ use clap::Parser;
 #[command(version, about, long_about = None)]
 struct Cli {
     #[arg(short = 'x', long)]
-    noah: String, // if the type is not Option, it is a required parameter
+    noah: Option<String>, // if the type is not Option, it is a required parameter
     #[arg(short, long)]
     name: Vec<String>,
     #[arg(short, long)]
