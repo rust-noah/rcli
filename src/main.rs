@@ -1,15 +1,12 @@
 use clap::Parser;
+use rcli::{process_csv, Opts, SubCommand};
 
-#[derive(Parser)]
-#[command(version, about, long_about = None)]
-struct Cli {
-    #[arg(short, long)]
-    name: Vec<String>, // --name <name> ... --name <name>
-    verbose: bool, // --verbose
-}
-
-fn main() {
-    let cli = Cli::parse();
-
-    println!("name: {:?}", cli.name);
+fn main() -> anyhow::Result<()> {
+    let opts = Opts::parse();
+    match opts.cmd {
+        SubCommand::Csv(opts) => {
+            process_csv(&opts.input, &opts.output)?;
+        }
+    }
+    Ok(())
 }
