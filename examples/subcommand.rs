@@ -36,7 +36,10 @@ fn main() {
         //     println!("'myapp add' was used, name is: {:?}", arg.name);
         // }
         Some(Commands::Add(arg)) => {
-            println!("'myapp add' was used, name is: {:?}, age is: {:?}", arg.name, arg.age);
+            println!(
+                "'myapp add' was used, name is: {:?}, age is: {:?}",
+                arg.name, arg.age
+            );
         }
         None => {
             println!("No subcommand was used");
