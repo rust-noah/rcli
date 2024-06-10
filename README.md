@@ -1,7 +1,13 @@
 # rcli
 
+## Functions
+- csv to json
+- random password generator
+
 ## How to run
 -  `make run  ARGS="csv --input ./assets/juventus.csv --output ./assets/juventus.json"`
+-  `make run  ARGS="csv --input ./assets/juventus.csv --format json --output ./assets/juventus.json"`
+-  `make run  ARGS="csv --input ./assets/juventus.csv --format yaml --output ./assets/juventus.yaml"`
 
 ## Setup
 - fork [repo](https://github.com/upupnoah/rcli.git)
