@@ -25,3 +25,6 @@
 - Merge PR
 
 - Delete branch (optional)
+
+## module organization method (Rust 2018)
+- using the same name as the module.rs in the module directory
