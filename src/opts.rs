@@ -18,6 +18,8 @@ pub struct Opts {
 pub enum SubCommand {
     #[command(name = "csv", about = "Show CSV, or convert CSV to other formats")]
     Csv(CsvOpts),
+    #[command(name = "genpass", about = "Generate a random password")]
+    GenPass(GenPassOpts),
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -50,6 +52,28 @@ pub struct CsvOpts {
     pub header: bool,
 }
 
+#[derive(Debug, Parser)]
+pub struct GenPassOpts {
+    /// Length of the password
+    #[arg(short, long, default_value = "16")]
+    pub length: u8,
+
+    /// Uppercase letters
+    #[arg(long, default_value_t = true)]
+    pub upper: bool,
+
+    /// Lowercase
+    #[arg(long, default_value_t = true)]
+    pub lower: bool,
+
+    /// Numbers
+    #[arg(short, long, default_value_t = true)]
+    pub number: bool,
+
+    /// Symbols
+    #[arg(long, default_value_t = true)]
+    pub symbol: bool,
+}
 // fn verify_input_file(filename: &str) -> Result<String, String> {
 //     if std::path::Path::new(filename).exists() {
 //         // Ok(filename.to_string())
