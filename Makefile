@@ -14,4 +14,4 @@ validated_values:
 	cargo run --example validated_values -- $(ARGS)
 
 run:
-	cargo run -- $(ARGS)
+	@cargo run -- $(ARGS)
