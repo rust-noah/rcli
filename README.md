@@ -28,3 +28,9 @@
 
 ## module organization method (Rust 2018)
 - using the same name as the module.rs in the module directory
+
+## git workflow
+- git add .
+- git commit
+- git push origin v\[number]-\[number]-\[event]
+- if org repo, maintainer will manually create the tag and release
