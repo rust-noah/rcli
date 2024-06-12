@@ -33,3 +33,4 @@
 - git add .
 - git commit
 - git push origin v\[number]-\[number]-\[event]
+- if org repo, maintainer will manually create the tag and release
