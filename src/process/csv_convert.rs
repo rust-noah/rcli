@@ -7,7 +7,6 @@ use crate::OutputFormat;
 
 // use crate::cli::OutputFormat;
 
-
 // use crate::cli::csv_opts::OutputFormat;
 
 // #[derive(Debug, Serialize, Deserialize)]
