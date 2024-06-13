@@ -14,7 +14,7 @@ mod text;
 pub use self::base64::{Base64Format, Base64Subcommand};
 pub use self::csv::{CsvOpts, OutputFormat};
 pub use self::genpass::GenPassOpts;
-pub use self::text::{TextSubcommand, TextSignFormat};
+pub use self::text::{TextSignFormat, TextSubcommand};
 
 #[derive(Debug, Parser)]
 #[command(name = "rcli", version, author, about, long_about = None)]
