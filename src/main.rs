@@ -3,7 +3,7 @@
 use clap::Parser;
 use rcli::{
     get_reader, process_csv, process_decode, process_encode, process_genpass, Base64Subcommand,
-    Opts, SubCommand,
+    Opts, SubCommand, TextSubcommand,
 };
 
 fn main() -> anyhow::Result<()> {
@@ -32,6 +32,20 @@ fn main() -> anyhow::Result<()> {
                 // Box 当做没有既可, 会自动 deref
                 let mut reader = get_reader(&opts.input)?;
                 process_decode(&mut reader, opts.format)?;
+            }
+        },
+        SubCommand::Text(subcmd) => match subcmd {
+            TextSubcommand::Sign(opts) => {
+                // let mut reader = get_reader(&opts.input)?;
+                // process_sign(&mut reader, &opts.key)?;
+            }
+            TextSubcommand::Verify(opts) => {
+                // let mut reader = get_reader(&opts.input)?;
+                // process_verify(&mut reader, &opts.key)?;
+            }
+            TextSubcommand::Generate(opts) => {
+                // let mut reader = get_reader(&opts.input)?;
+                // process_generate(&mut reader, &opts.key)?;
             }
         },
     }

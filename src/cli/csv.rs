@@ -1,7 +1,7 @@
 use clap::Parser;
 use std::str::FromStr;
 
-use super::verify_input_file;
+use super::verify_file;
 
 // rcli csv -i input.csv -o output.json --header -d ','
 // -> 支持多格式: json, yaml
@@ -11,7 +11,7 @@ use super::verify_input_file;
 #[derive(Debug, Parser)]
 pub struct CsvOpts {
     /// Input file
-    #[arg(short, long, value_parser=verify_input_file)]
+    #[arg(short, long, value_parser=verify_file)]
     pub input: String,
 
     /// Output file
