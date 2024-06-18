@@ -13,5 +13,8 @@ mode:
 validated_values:
 	cargo run --example validated_values -- $(ARGS)
 
+text-cli:
+	cargo run --example text_cli -- $(ARGS)
+
 run:
 	@cargo run -- $(ARGS)

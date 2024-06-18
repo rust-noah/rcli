@@ -46,6 +46,8 @@ pub enum SubCommand {
 //     }
 // }
 
+// 参数需要什么类型, 这种 verify 的返回值就是 Result<需要的类型, &'static str>
+// 右侧的是 E, 可以是 &'static str, 也可以是 String(看自己的需求)
 fn verify_file(filename: &str) -> Result<String, &'static str> {
     // if input is "-" or file exists
     if filename == "-" || Path::new(filename).exists() {

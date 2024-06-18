@@ -4,16 +4,6 @@ use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};
 use rand::rngs::OsRng;
 use std::{collections::HashMap, io::Read};
 
-pub trait TextSigner {
-    // signer could sign any input data
-    fn sign(&self, reader: &mut dyn Read) -> Result<Vec<u8>>;
-}
-
-pub trait TextVerifier {
-    // verifier could verify any input data
-    fn verify(&self, reader: &mut dyn Read, sig: &[u8]) -> Result<bool>;
-}
-
 pub struct Blake3 {
     key: [u8; 32],
 }
@@ -24,6 +14,17 @@ pub struct Ed25519Signer {
 
 pub struct Ed25519Verifier {
     key: VerifyingKey,
+}
+
+//  将 sign 和 verify 的行为抽象成 trait
+pub trait TextSigner {
+    // signer could sign any input data
+    fn sign(&self, reader: &mut dyn Read) -> Result<Vec<u8>>;
+}
+
+pub trait TextVerifier {
+    // verifier could verify any input data
+    fn verify(&self, reader: &mut dyn Read, sig: &[u8]) -> Result<bool>;
 }
 
 impl TextSigner for Blake3 {
@@ -64,6 +65,12 @@ impl TextVerifier for Ed25519Verifier {
 }
 
 impl Blake3 {
+    // 常见的实现 AsRef<[u8]> 的类型
+    // Vec<u8>
+    // String
+    // &str
+    // [u8; N] 对于任何大小的N
+    // &[u8]
     pub fn try_new(key: impl AsRef<[u8]>) -> Result<Self> {
         let key = key.as_ref();
         // convert &[u8] to &[u8; 32]
@@ -154,13 +161,18 @@ mod tests {
     use super::*;
     use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
 
+    // key
     const KEY: &[u8] = include_bytes!("../../fixtures/blake3.txt");
 
     #[test]
     fn test_process_text_sign() -> Result<()> {
+        // key 在上面已经定义
+        // input
         let mut reader = "hello".as_bytes();
         let mut reader1 = "hello".as_bytes();
+        // format
         let format = TextSignFormat::Blake3;
+        // signature
         let sig = process_text_sign(&mut reader, KEY, format)?;
         let ret = process_text_verify(&mut reader1, KEY, &sig, format)?;
         assert!(ret);
@@ -169,6 +181,7 @@ mod tests {
 
     #[test]
     fn test_process_text_verify() -> Result<()> {
+        // input
         let mut reader = "hello".as_bytes();
         let format = TextSignFormat::Blake3;
         let sig = "33Ypo4rveYpWmJKAiGnnse-wHQhMVujjmcVkV4Tl43k";
