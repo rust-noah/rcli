@@ -1,5 +1,6 @@
 use crate::{process_genpass, TextSignFormat};
 use anyhow::Result;
+use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
 use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};
 use rand::rngs::OsRng;
 use std::{collections::HashMap, io::Read};
@@ -41,6 +42,11 @@ impl TextVerifier for Blake3 {
         let mut buf = Vec::new();
         reader.read_to_end(&mut buf)?;
         let ret = blake3::keyed_hash(&self.key, &buf);
+        println!("sig: {:?}", sig);
+        println!(
+            "new_sig: {:?}",
+            URL_SAFE_NO_PAD.encode(ret.as_bytes()).as_bytes()
+        );
         Ok(ret.as_bytes() == sig)
     }
 }
@@ -159,7 +165,7 @@ pub fn process_text_key_generate(format: TextSignFormat) -> Result<HashMap<&'sta
 #[cfg(test)]
 mod tests {
     use super::*;
-    use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
+    // use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
 
     // key
     const KEY: &[u8] = include_bytes!("../../fixtures/blake3.txt");
@@ -176,6 +182,14 @@ mod tests {
         let sig = process_text_sign(&mut reader, KEY, format)?;
         let ret = process_text_verify(&mut reader1, KEY, &sig, format)?;
         assert!(ret);
+
+        // TODO Ed25519
+        // let sk = Ed25519Signer::load("fixtures/ed25519.sk")?;
+        // let pk = Ed25519Verifier::load("fixtures/ed25519.pk")?;
+
+        // let data = b"hello world";
+        // let sig = sk.sign(&mut &data[..])?;
+        // assert!(pk.verify(&data[..], &sig)?);
         Ok(())
     }
 
@@ -183,10 +197,12 @@ mod tests {
     fn test_process_text_verify() -> Result<()> {
         // input
         let mut reader = "hello".as_bytes();
+        let mut reader1 = "hello".as_bytes();
         let format = TextSignFormat::Blake3;
-        let sig = "33Ypo4rveYpWmJKAiGnnse-wHQhMVujjmcVkV4Tl43k";
-        let sig = URL_SAFE_NO_PAD.decode(sig)?;
-        let ret = process_text_verify(&mut reader, KEY, &sig, format)?;
+        // let sig = "eG6j-ghHZvMgTj0fQRrHrQ17vdoBqxNl5z7P_ot-rMU";
+        // let sig = URL_SAFE_NO_PAD.decode(sig)?;
+        let sig = process_text_sign(&mut reader, KEY, format)?;
+        let ret = process_text_verify(&mut reader1, KEY, &sig, format)?;
         assert!(ret);
         Ok(())
     }
