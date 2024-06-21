@@ -5,6 +5,7 @@ use clap::Parser;
 mod base64;
 mod csv;
 mod genpass;
+mod http;
 mod text;
 
 // pub use csv_opts::{CsvOpts, OutputFormat};
@@ -14,6 +15,7 @@ mod text;
 pub use self::base64::{Base64Format, Base64Subcommand};
 pub use self::csv::{CsvOpts, OutputFormat};
 pub use self::genpass::GenPassOpts;
+pub use self::http::HttpSubCommand;
 pub use self::text::{TextSignFormat, TextSubcommand};
 
 #[derive(Debug, Parser)]
@@ -33,6 +35,8 @@ pub enum SubCommand {
     Base64(Base64Subcommand),
     #[command(subcommand, about = "Text sign/verify")]
     Text(TextSubcommand),
+    #[command(subcommand, about = "HTTP server")]
+    Http(HttpSubCommand),
 }
 
 // 会传入文件名
