@@ -26,6 +26,9 @@ thread:
 
 run:
 	@cargo run -- $(ARGS)
+
+run_with_log:
+	@RUST_LOG=info cargo run -- $(ARGS)
 # ******** csv ********
 # make run ARGS="csv --input "
 # make run ARGS="csv --input a.csv"

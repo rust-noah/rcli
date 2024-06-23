@@ -11,6 +11,7 @@ use rcli::{
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt::init(); // init tracing
     let opts = Opts::parse();
     match opts.cmd {
         SubCommand::Csv(opts) => {

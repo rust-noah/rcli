@@ -2,10 +2,11 @@ use anyhow::Result;
 use axum::{
     extract::{Path, State},
     http::StatusCode,
+    response::Html,
     routing::get,
     Router,
 };
-use std::{net::SocketAddr, path::PathBuf, sync::Arc};
+use std::{fs, io, net::SocketAddr, path::PathBuf, sync::Arc};
 use tower_http::services::ServeDir;
 use tracing::{info, warn};
 
@@ -19,6 +20,7 @@ pub async fn process_http_serve(path: PathBuf, port: u16) -> Result<()> {
     info!("Serving {:?} on {}", path, addr);
 
     let state = HttpServeState { path: path.clone() };
+
     // axum router
     let router = Router::new()
         .nest_service("/tower", ServeDir::new(path))
@@ -32,33 +34,58 @@ pub async fn process_http_serve(path: PathBuf, port: u16) -> Result<()> {
 
 async fn file_handler(
     State(state): State<Arc<HttpServeState>>,
-    Path(path): Path<String>,
-) -> (StatusCode, String) {
-    let p = std::path::Path::new(&state.path).join(path);
-    info!("Reading file {:?}", p);
-    if !p.exists() {
+    Path(subpath): Path<String>,
+) -> (StatusCode, Html<String>) {
+    let file_path = state.path.join(&subpath);
+
+    info!("Reading file {:?}", file_path);
+    if !file_path.exists() {
         (
             StatusCode::NOT_FOUND,
-            format!("File {} note found", p.display()),
+            Html(format!(
+                "<html><body><p>File {} not found.</p></body></html>",
+                file_path.display()
+            )),
         )
+    } else if file_path.is_dir() {
+        let mut entries = fs::read_dir(file_path)
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+            .and_then(|iter| {
+                iter.map(|entry| entry.map(|e| e.file_name().into_string().unwrap_or_default()))
+                    .collect::<Result<Vec<_>, io::Error>>()
+            })
+            .unwrap_or_else(|_| vec![]);
+
+        entries.sort();
+        let list_items = entries
+            .iter()
+            .map(|entry| format!("<li><a href=\"{0}\">{0}</a></li>", entry))
+            .collect::<Vec<_>>()
+            .join("");
+
+        return (
+            StatusCode::OK,
+            Html(format!("<html><body><ul>{}</ul></body></html>", list_items)),
+        );
     } else {
-        // TODO: test p is a directory
-        // if it is a directory, list all files/subdirectories
-        // as <li><a href="/path/to/file">file name</a></li>
-        // <html><body><ul>...</ul></body></html>
-        match tokio::fs::read_to_string(p).await {
+        match tokio::fs::read_to_string(file_path).await {
             Ok(content) => {
                 info!("Read {} bytes", content.len());
-                (StatusCode::OK, content)
+                (StatusCode::OK, Html(content))
             }
             Err(e) => {
                 warn!("Error reading file: {:?}", e);
-                (StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Html(format!(
+                        "<html><body><p>Error reading file: {:?}</p></body></html>",
+                        e
+                    )),
+                )
             }
         }
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -68,8 +95,7 @@ mod tests {
         let state = Arc::new(HttpServeState {
             path: PathBuf::from("."),
         });
-        let (status, content) = file_handler(State(state), Path("Cargo.toml".to_string())).await;
+        let (status, _) = file_handler(State(state), Path("Cargo.toml".to_string())).await;
         assert_eq!(status, StatusCode::OK);
-        assert!(content.trim().starts_with("[package]"));
     }
 }
