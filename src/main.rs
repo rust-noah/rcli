@@ -8,7 +8,7 @@ use rcli::{CmdExecuter, Opts};
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init(); // init tracing
     let opts = Opts::parse();
-    opts.cmd.execute().await?;
+    // region:    --- Before refactoring with enum_dispatch
     // match opts.cmd {
     //     SubCommand::Csv(opts) => {
     //         process_csv(&opts.input, &opts.output, &opts.format)?;
@@ -86,5 +86,7 @@ async fn main() -> anyhow::Result<()> {
     //         }
     //     },
     // }
+    // endregion: --- Before refactoring with enum_dispatch
+    opts.cmd.execute().await?;
     Ok(())
 }
