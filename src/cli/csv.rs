@@ -1,5 +1,7 @@
 use clap::Parser;
-use std::str::FromStr;
+use std::{fmt, str::FromStr};
+
+use crate::{process_csv, CmdExecuter};
 
 use super::verify_file;
 
@@ -16,7 +18,7 @@ pub struct CsvOpts {
 
     /// Output file
     #[arg(short, long, default_value = "output.json")] // "output.json".into()
-    pub output: String,
+    pub output: Option<String>,
 
     /// Output format
     #[arg(long, value_parser = parse_output_format, default_value = "json")]
@@ -38,19 +40,31 @@ pub enum OutputFormat {
     // Toml,
 }
 
+// region:    --- impls
+impl CmdExecuter for CsvOpts {
+    async fn execute(self) -> anyhow::Result<()> {
+        let output = if let Some(output) = self.output {
+            output
+        } else {
+            format!("output.{}", self.format)
+        };
+        process_csv(&self.input, &output, &self.format)
+    }
+}
+
 // 生命周期与内存一样的类型, 统称为 'static (静态生命周期)
 // 1. const
 // 2. Box::leak
 
-// impl From<OutputFormat> for &'static str {
-//     fn from(format: OutputFormat) -> Self {
-//         match format {
-//             OutputFormat::Json => "json",
-//             OutputFormat::Yaml => "yaml",
-//             // OutputFormat::Toml => "toml",
-//         }
-//     }
-// }
+impl From<OutputFormat> for &'static str {
+    fn from(format: OutputFormat) -> Self {
+        match format {
+            OutputFormat::Json => "json",
+            OutputFormat::Yaml => "yaml",
+            // OutputFormat::Toml => "toml",
+        }
+    }
+}
 
 impl FromStr for OutputFormat {
     type Err = anyhow::Error;
@@ -64,6 +78,13 @@ impl FromStr for OutputFormat {
         }
     }
 }
+
+impl fmt::Display for OutputFormat {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", Into::<&str>::into(*self))
+    }
+}
+// endregion: --- impls
 
 // 会传入 json or yaml
 // -> csv --format json or csv --format yaml
