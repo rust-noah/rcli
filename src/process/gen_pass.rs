@@ -1,11 +1,11 @@
 use rand::seq::SliceRandom;
-use zxcvbn::zxcvbn;
 
 const UPPER: &[u8] = b"ABCDEFGHJKLMNPQRSTUVWXYZ";
 const LOWER: &[u8] = b"abcdefghijkmnopqrstuvwxyz";
 const NUMBER: &[u8] = b"123456789";
 const SYMBOL: &[u8] = b"!@#$%^&*_";
 
+// region:    --- Code before decoupling
 // pub fn process_genpass(opts: &GenPassOpts) -> anyhow::Result<String> {
 //     let mut rng = rand::thread_rng();
 //     let mut password = Vec::new();
@@ -39,6 +39,7 @@ const SYMBOL: &[u8] = b"!@#$%^&*_";
 
 //     Ok(String::from_utf8(password)?)
 // }
+// endregion: --- Code before decoupling
 
 // 把数据结构拆解出来, 不与 opts.rs 产生耦合
 // 好处: 下次想把这部分逻辑拆解分来, 放到其他 repo 的时候, 就会比较方便了
@@ -81,8 +82,9 @@ pub fn process_genpass(
 
     let password = String::from_utf8(password)?;
 
-    let estimate = zxcvbn(&password, &[]);
-    println!("Password strength: {}", estimate.score());
+    // Detecting in the executor!
+    // let estimate = zxcvbn(&password, &[]);
+    // println!("Password strength: {}", estimate.score());
 
     Ok(password)
 }

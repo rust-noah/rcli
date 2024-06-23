@@ -43,7 +43,11 @@ async fn file_handler(
         (
             StatusCode::NOT_FOUND,
             Html(format!(
-                "<html><body><p>File {} not found.</p></body></html>",
+                "<html>
+                    <body>
+                        <p>File {} not found.</p>
+                    </body>
+                </html>",
                 file_path.display()
             )),
         )
