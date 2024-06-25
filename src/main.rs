@@ -2,12 +2,14 @@
 
 use clap::Parser;
 
-use rcli::{CmdExecuter, Opts};
+use rcli::{CmdExecutor, Opts}; // 因为需要使用 CmdExecutor trait 的 execute 方法, 所以导入
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init(); // init tracing
     let opts = Opts::parse();
+    opts.cmd.execute().await?;
+
     // region:    --- Before refactoring with enum_dispatch
     // match opts.cmd {
     //     SubCommand::Csv(opts) => {
@@ -87,6 +89,6 @@ async fn main() -> anyhow::Result<()> {
     //     },
     // }
     // endregion: --- Before refactoring with enum_dispatch
-    opts.cmd.execute().await?;
+
     Ok(())
 }

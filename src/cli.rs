@@ -7,6 +7,7 @@ mod base64;
 mod csv;
 mod genpass;
 mod http;
+mod jwt;
 mod text;
 
 // pub use csv_opts::{CsvOpts, OutputFormat};
@@ -18,7 +19,7 @@ mod text;
 // pub use self::genpass::GenPassOpts;
 // pub use self::http::{HttpServeOpts, HttpSubCommand};
 // pub use self::text::{TextSignFormat, TextSignOpts, TextSubcommand, TextVerifyOpts};
-pub use self::{base64::*, csv::*, genpass::*, http::*, text::*};
+pub use self::{base64::*, csv::*, genpass::*, http::*, jwt::*, text::*};
 
 #[derive(Debug, Parser)]
 #[command(name = "rcli", version, author, about, long_about = None)]
@@ -28,7 +29,7 @@ pub struct Opts {
 }
 
 #[derive(Debug, Parser)]
-#[enum_dispatch(CmdExecuter)]
+#[enum_dispatch(CmdExecutor)]
 pub enum SubCommand {
     #[command(name = "csv", about = "Show CSV, or convert CSV to other formats")]
     Csv(CsvOpts),
@@ -40,13 +41,14 @@ pub enum SubCommand {
     Text(TextSubcommand),
     #[command(subcommand, about = "HTTP server")]
     Http(HttpSubCommand),
+    #[command(subcommand, about = "JWT sign/verify")]
+    Jwt(JwtSubCommand),
 }
 
 // 会传入文件名
 // csv --input filename(xxx.csv)
 // pub fn verify_input_file(filename: &str) -> Result<String, &'static str> {
 //     if Path::new(filename).exists() {
-//         // Ok(filename.to_string())
 //         Ok(filename.into())
 //     } else {
 //         Err("File not found")

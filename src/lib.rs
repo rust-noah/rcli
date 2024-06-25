@@ -19,6 +19,6 @@ pub use utils::*;
 // after rust 1.75, async fn in trait is allowed
 #[allow(async_fn_in_trait)]
 #[enum_dispatch]
-pub trait CmdExecuter {
+pub trait CmdExecutor {
     async fn execute(self) -> anyhow::Result<()>;
 }

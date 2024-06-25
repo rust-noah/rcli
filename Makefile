@@ -100,3 +100,8 @@ run_with_log:
 
 # ******** http ********
 # make run ARGS="http serve"
+
+# ******** jwt ********
+# make run ARGS="jwt sign"
+# make run_with_log ARGS="jwt sign --sub noah-future --aud noah --exp 7d"
+# make run_with_log ARGS="jwt verify  --token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJub2FoIiwiZXhwIjoxNzE5ODQyMjg3LCJzdWIiOiJub2FoLWZ1dHVyZSIsImlhdCI6MTcxOTIzNzQ4N30.V0IEykmRp58PT6fQk4_KbnoytltQKdBU4jmlNMyCh8U"
