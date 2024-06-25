@@ -1,7 +1,7 @@
 use clap::Parser;
 use std::{fmt, str::FromStr};
 
-use crate::{process_csv, CmdExecuter};
+use crate::{process_csv, CmdExecutor};
 
 use super::verify_file;
 
@@ -41,7 +41,7 @@ pub enum OutputFormat {
 }
 
 // region:    --- impls
-impl CmdExecuter for CsvOpts {
+impl CmdExecutor for CsvOpts {
     async fn execute(self) -> anyhow::Result<()> {
         let output = if let Some(output) = self.output {
             output

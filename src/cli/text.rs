@@ -7,12 +7,12 @@ use tokio::fs;
 use super::{verify_file, verify_path};
 use crate::{
     get_content, get_reader, process_text_key_generate, process_text_sign, process_text_verify,
-    CmdExecuter,
+    CmdExecutor,
 };
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
 
 #[derive(Debug, Parser)]
-#[enum_dispatch(CmdExecuter)]
+#[enum_dispatch(CmdExecutor)]
 pub enum TextSubcommand {
     #[command(
         name = "sign",
@@ -96,7 +96,7 @@ impl fmt::Display for TextSignFormat {
     }
 }
 
-impl CmdExecuter for TextSignOpts {
+impl CmdExecutor for TextSignOpts {
     async fn execute(self) -> anyhow::Result<()> {
         let mut reader = get_reader(&self.input)?;
         let key = get_content(&self.key)?;
@@ -108,7 +108,7 @@ impl CmdExecuter for TextSignOpts {
     }
 }
 
-impl CmdExecuter for TextVerifyOpts {
+impl CmdExecutor for TextVerifyOpts {
     async fn execute(self) -> anyhow::Result<()> {
         let mut reader = get_reader(&self.input)?;
         let key = get_content(&self.key)?;
@@ -123,7 +123,7 @@ impl CmdExecuter for TextVerifyOpts {
     }
 }
 
-impl CmdExecuter for KeyGenerateOpts {
+impl CmdExecutor for KeyGenerateOpts {
     async fn execute(self) -> anyhow::Result<()> {
         let key = process_text_key_generate(self.format)?;
         for (k, v) in key {
